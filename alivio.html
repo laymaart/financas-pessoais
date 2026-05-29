@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<meta name="theme-color" content="#d4a017" />
+<title>Finanças Pessoais</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Carlito:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{font-family:'Carlito','Calibri',sans-serif;background:#fafaf9;color:#1c1917;-webkit-font-smoothing:antialiased;}
+#carregando{text-align:center;padding:80px 20px;color:#78716c;font-size:14px;font-family:'Carlito','Calibri',sans-serif;}
+
+:root{
+  --gold:#d4a017; --gold-deep:#8a6b0f; --gold-rich:#b88509; --gold-soft:#fdf6e3;
+  --gold-line:#f0d97c; --gold-bg:#fffbeb;
+  --receita:#008000; --receita-deep:#005a00; --receita-soft:#e6f5e6; --receita-line:#9fcf9f;
+  --despesa:#ff5c00; --despesa-deep:#b34000; --despesa-soft:#fff1e5; --despesa-line:#ffc299;
+  --divida:#ff2c2c; --divida-deep:#b31f1f; --divida-soft:#ffe5e5; --divida-line:#ffadad;
+  --ink:#1c1917; --ink-soft:#44403c; --muted:#78716c;
+  --line:#e7e5e4; --line-soft:#f5f5f4;
+  --surface:#ffffff; --bg:#fafaf9; --surface2:#f5f5f4;
+  --shadow-sm:0 1px 2px rgba(28,25,23,.04), 0 1px 1px rgba(28,25,23,.03);
+  --shadow:0 4px 12px rgba(28,25,23,.06), 0 2px 4px rgba(28,25,23,.04);
+  --shadow-lg:0 12px 32px rgba(28,25,23,.10), 0 4px 8px rgba(28,25,23,.06);
+}
+button{font-family:inherit;}
+.alv-shell{min-height:100vh;}
+.alv-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;}
+.alv-shadow{box-shadow:var(--shadow);}
+.alv-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);}
+.alv-input{
+  width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:9px;
+  background:var(--surface);color:var(--ink);font-family:inherit;font-size:14px;outline:none;
+  transition:border-color .15s, box-shadow .15s;
+}
+.alv-input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,160,23,.15);}
+.alv-btn{
+  border:none;border-radius:9px;font-family:inherit;font-weight:700;cursor:pointer;
+  transition:transform .1s, box-shadow .15s, background .15s, color .15s;
+}
+.alv-btn:hover{transform:translateY(-1px);}
+.alv-btn:active{transform:translateY(0);}
+.alv-btn-primary{background:var(--gold);color:var(--ink);}
+.alv-btn-primary:hover{background:var(--gold-rich);}
+.alv-btn-ghost{background:transparent;color:var(--ink);}
+.alv-btn-ghost:hover{background:var(--surface2);}
+.alv-btn-ink{background:var(--ink);color:#fff;}
+.alv-btn-ink:hover{background:#000;}
+.alv-row{display:flex;align-items:center;}
+.alv-fade{animation:alvFade .25s ease-out;}
+@keyframes alvFade{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+
+.alv-mes{
+  padding:7px 13px;border-radius:7px;font-size:12.5px;font-weight:700;cursor:pointer;
+  background:var(--surface);border:1px solid var(--line);color:var(--muted);
+  white-space:nowrap;flex-shrink:0;transition:all .15s;font-family:inherit;
+}
+.alv-mes:hover{border-color:var(--gold-line);color:var(--ink);}
+.alv-mes.on{background:var(--gold);border-color:var(--gold);color:var(--ink);}
+.alv-mes.arq{opacity:.45;}
+
+.alv-ano{
+  display:flex;align-items:center;gap:8px;padding:9px 14px;width:100%;text-align:left;
+  background:var(--surface);border:1px solid var(--line);border-radius:10px;cursor:pointer;
+  font-family:inherit;font-weight:700;font-size:14px;color:var(--ink);
+  transition:all .15s;margin-bottom:8px;
+}
+.alv-ano:hover{border-color:var(--gold-line);}
+.alv-ano.on{background:var(--gold-bg);border-color:var(--gold-line);}
+
+.alv-tab{
+  padding:9px 14px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;
+  background:transparent;border:none;color:var(--muted);transition:all .15s;
+  display:flex;align-items:center;gap:6px;font-family:inherit;white-space:nowrap;
+}
+.alv-tab:hover{color:var(--ink);background:var(--surface2);}
+.alv-tab.on{background:var(--ink);color:var(--surface);}
+
+.alv-logo{font-weight:700;letter-spacing:-.02em;color:var(--ink);}
+.alv-logo span{color:var(--gold);}
+
+.alv-stat{padding:18px 20px;border-radius:14px;background:var(--surface);border:1px solid var(--line);}
+.alv-stat-label{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);}
+.alv-stat-value{font-size:28px;font-weight:700;line-height:1.1;margin-top:6px;letter-spacing:-.02em;}
+.alv-stat-sub{font-size:11.5px;color:var(--muted);margin-top:6px;line-height:1.4;}
+.alv-stat.receita{background:var(--receita-soft);border-color:var(--receita-line);}
+.alv-stat.receita .alv-stat-value{color:var(--receita-deep);}
+.alv-stat.despesa{background:var(--despesa-soft);border-color:var(--despesa-line);}
+.alv-stat.despesa .alv-stat-value{color:var(--despesa-deep);}
+.alv-stat.divida{background:var(--divida-soft);border-color:var(--divida-line);}
+.alv-stat.divida .alv-stat-value{color:var(--divida-deep);}
+.alv-stat.saldo-pos{background:linear-gradient(135deg,#fef9e7 0%,#fdf3c4 100%);border-color:var(--gold-line);}
+.alv-stat.saldo-pos .alv-stat-value{color:var(--gold-deep);}
+.alv-stat.saldo-neg{background:var(--divida-soft);border-color:var(--divida-line);}
+.alv-stat.saldo-neg .alv-stat-value{color:var(--divida-deep);}
+
+.alv-item{display:flex;align-items:center;gap:12px;padding:13px 14px;border:1px solid var(--line);border-radius:11px;margin-bottom:8px;background:var(--surface);transition:border-color .15s;}
+.alv-item:hover{border-color:var(--gold-line);}
+.alv-cat-tag{padding:3px 9px;border-radius:6px;background:var(--gold-soft);color:var(--gold-deep);font-size:10.5px;font-weight:700;letter-spacing:.04em;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;flex-shrink:0;}
+
+.alv-tbl{width:100%;border-collapse:separate;border-spacing:0;font-size:13px;}
+.alv-tbl thead th{text-align:left;font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;padding:10px 12px;border-bottom:1px solid var(--line);}
+.alv-tbl tbody td{padding:12px;border-bottom:1px solid var(--line-soft);}
+.alv-tbl tbody tr{cursor:pointer;transition:background .12s;}
+.alv-tbl tbody tr:hover{background:var(--gold-bg);}
+.alv-tbl tbody tr.atual{background:var(--gold-bg);}
+.alv-tbl tbody tr.atual td:first-child{border-left:3px solid var(--gold);}
+.alv-tbl-detalhe{background:var(--surface2);padding:14px 18px !important;}
+
+.alv-progress{height:8px;background:var(--surface2);border-radius:4px;overflow:hidden;}
+.alv-progress > div{height:100%;background:var(--receita);transition:width .3s;}
+
+.alv-badge{display:inline-block;padding:3px 9px;border-radius:6px;font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;}
+.alv-badge.aberto{background:var(--divida-soft);color:var(--divida-deep);}
+.alv-badge.negociada{background:var(--gold-bg);color:var(--gold-deep);}
+.alv-badge.quitada{background:var(--receita-soft);color:var(--receita-deep);}
+
+.alv-mes-strip::-webkit-scrollbar{height:6px;}
+.alv-mes-strip::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px;}
+
+@media (max-width: 640px){
+  .alv-stat-value{font-size:22px;}
+  .alv-tab{padding:8px 11px;font-size:12px;}
+  .alv-logo{font-size:18px;}
+  .alv-tbl thead th, .alv-tbl tbody td{padding:9px 8px;font-size:12px;}
+  .alv-tbl thead th{font-size:9.5px;}
+}
+</style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@18.2.0",
+    "react-dom": "https://esm.sh/react-dom@18.2.0",
+    "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
+    "react/jsx-runtime": "https://esm.sh/react@18.2.0/jsx-runtime",
+    "recharts": "https://esm.sh/recharts@2.12.7?deps=react@18.2.0,react-dom@18.2.0",
+    "lucide-react": "https://esm.sh/lucide-react@0.383.0?deps=react@18.2.0"
+  }
+}
+</script>
+</head>
+<body>
+<div id="root"><div id="carregando">Carregando o app…</div></div>
+<script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+<script type="text/babel" data-type="module" data-presets="react">
+import React, { useState, useEffect } from 'react';
+import { createRoot } from 'react-dom/client';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend } from 'recharts';
+import {
+  Lock, LogOut, Settings, Plus, Trash2, ArrowUp, ArrowDown,
+  Archive, Eye, EyeOff, Pencil, ArrowLeft, ChevronDown, ChevronRight, Check
+} from 'lucide-react';
+
+/* =================== constantes =================== */
+const MESES_POR_ANO = {
+  "2026": ["Jun/26", "Jul/26", "Ago/26", "Set/26", "Out/26", "Nov/26", "Dez/26"],
+  "2027": ["Jan/27", "Fev/27", "Mar/27", "Abr/27", "Mai/27", "Jun/27", "Jul/27", "Ago/27", "Set/27", "Out/27", "Nov/27", "Dez/27"],
+};
+const ANOS = Object.keys(MESES_POR_ANO);
+const MESES = ANOS.flatMap(a => MESES_POR_ANO[a]);
+const MES_PADRAO = "Jun/26";
+const SENHA_INICIAL = "alivio@123.$";
+const anoDoMes = (m) => m.endsWith('/26') ? '2026' : '2027';
+
+const CAT_DESPESA = [
+  { id: "moradia", nome: "Moradia", emoji: "🏠" },
+  { id: "saude", nome: "Saúde", emoji: "🩺" },
+  { id: "farmacia", nome: "Farmácia", emoji: "💊" },
+  { id: "faxina", nome: "Faxina", emoji: "🧹" },
+  { id: "internet", nome: "Internet", emoji: "📡" },
+  { id: "alimentacao", nome: "Alimentação", emoji: "🍽️" },
+  { id: "lazer", nome: "Lazer", emoji: "🎉" },
+  { id: "uber", nome: "Uber", emoji: "🚗" },
+  { id: "cartao-lia", nome: "Cartão Lia", emoji: "💳" },
+  { id: "cartao-mae", nome: "Cartão Mãe", emoji: "💳" },
+];
+const CAT_RECEITA = [
+  { id: "salario", nome: "Salário Fixo", emoji: "💼" },
+  { id: "comissao", nome: "Comissão", emoji: "📈" },
+  { id: "projetos", nome: "Projetos", emoji: "💡" },
+  { id: "variavel", nome: "Receita Variável", emoji: "✨" },
+];
+const STATUS_DIVIDA = ["Em aberto", "Negociada", "Quitada"];
+
+const catDesp = (id) => CAT_DESPESA.find(c => c.id === id) || { id, nome: id, emoji: "•" };
+const catRec  = (id) => CAT_RECEITA.find(c => c.id === id) || { id, nome: id, emoji: "•" };
+
+/* =================== utilidades =================== */
+const brl = (n) => "R$ " + (Number(n) || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
+const numBR = (v) => parseFloat(String(v).replace(/\./g, '').replace(',', '.')) || 0;
+
+// gera parcelas distribuídas igualmente, ajustando a última pra fechar o total
+function gerarParcelas(total, n, mesInicial) {
+  const idxIni = MESES.indexOf(mesInicial);
+  if (idxIni < 0 || n < 1) return [];
+  const base = Math.round((total / n) * 100) / 100;
+  let acumulado = 0;
+  const parcelas = [];
+  for (let i = 0; i < n; i++) {
+    const idx = Math.min(idxIni + i, MESES.length - 1);
+    const v = (i === n - 1) ? +(total - acumulado).toFixed(2) : base;
+    acumulado = +(acumulado + v).toFixed(2);
+    parcelas.push({ mes: MESES[idx], valor: v });
+  }
+  return parcelas;
+}
+
+async function storeGet(key, def) {
+  try {
+    if (typeof window !== 'undefined' && window.storage) {
+      const r = await window.storage.get(key);
+      return r ? JSON.parse(r.value) : def;
+    }
+    const v = localStorage.getItem(key);
+    return v != null ? JSON.parse(v) : def;
+  } catch { return def; }
+}
+async function storeSet(key, val) {
+  try {
+    if (typeof window !== 'undefined' && window.storage) {
+      await window.storage.set(key, JSON.stringify(val)); return;
+    }
+    localStorage.setItem(key, JSON.stringify(val));
+  } catch {}
+}
+
+/* =================== Login =================== */
+function Login({ senha, onEntrar }) {
+  const [valor, setValor] = useState('');
+  const [erro, setErro] = useState(false);
+  const tentar = () => {
+    if (valor === senha) onEntrar();
+    else { setErro(true); setTimeout(() => setErro(false), 1800); }
+  };
+  return (
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20, background: 'linear-gradient(160deg,#fffbeb 0%,#fafaf9 55%)' }}>
+      <div className="alv-card alv-shadow alv-fade" style={{ maxWidth: 400, width: '100%', padding: '40px 32px' }}>
+        <div style={{ textAlign: 'center', marginBottom: 28 }}>
+          <div className="alv-logo" style={{ fontSize: 28, marginBottom: 8, lineHeight: 1.15 }}>Finanças<br/>Pessoais<span>.</span></div>
+          <p style={{ fontSize: 13, color: 'var(--muted)', margin: 0, fontStyle: 'italic' }}>Organização, clareza, alívio.</p>
+        </div>
+        <span className="alv-label">Senha</span>
+        <input className="alv-input" type="password" value={valor}
+          onChange={(e) => setValor(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && tentar()}
+          style={{ marginTop: 6, marginBottom: 14, borderColor: erro ? 'var(--divida)' : undefined }}
+          autoFocus />
+        {erro && <div style={{ fontSize: 12, color: 'var(--divida-deep)', marginBottom: 10, fontWeight: 700 }}>Senha incorreta.</div>}
+        <button className="alv-btn alv-btn-primary" onClick={tentar} style={{ width: '100%', padding: '12px 16px', fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+          <Lock size={14} /> Entrar
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* =================== Header =================== */
+function Header({ mes, onSair, onAjustes }) {
+  return (
+    <header style={{ padding: '16px 20px', borderBottom: '1px solid var(--line)', background: 'var(--surface)', position: 'sticky', top: 0, zIndex: 10 }}>
+      <div style={{ maxWidth: 1100, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+        <div className="alv-logo" style={{ fontSize: 19 }}>Finanças Pessoais<span>.</span></div>
+        <div style={{ fontSize: 11.5, color: 'var(--muted)', fontWeight: 700, letterSpacing: '.06em', textTransform: 'uppercase' }}>
+          {mes}
+        </div>
+        <div className="alv-row" style={{ gap: 4 }}>
+          <button className="alv-btn alv-btn-ghost" onClick={onAjustes} title="Ajustes" style={{ padding: '8px 10px' }}>
+            <Settings size={16} />
+          </button>
+          <button className="alv-btn alv-btn-ghost" onClick={onSair} title="Sair" style={{ padding: '8px 10px' }}>
+            <LogOut size={16} />
+          </button>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+/* =================== Seletor de Ano/Mês =================== */
+function AnoMesSelector({ mes, setMes, arquivados, mostrarArq, setMostrarArq }) {
+  const [abertos, setAbertos] = useState([anoDoMes(mes)]);
+  const toggle = (ano) => setAbertos(prev => prev.includes(ano) ? prev.filter(a => a !== ano) : [...prev, ano]);
+  return (
+    <div style={{ padding: '14px 20px 12px', background: 'var(--surface)', borderBottom: '1px solid var(--line)' }}>
+      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+        <div className="alv-row" style={{ justifyContent: 'space-between', marginBottom: 10 }}>
+          <span className="alv-label">Ano e mês</span>
+          <button className="alv-btn alv-btn-ghost" onClick={() => setMostrarArq(!mostrarArq)}
+            style={{ fontSize: 11, padding: '4px 8px', color: 'var(--muted)', display: 'flex', alignItems: 'center', gap: 4 }}>
+            {mostrarArq ? <EyeOff size={12} /> : <Eye size={12} />}
+            {mostrarArq ? 'Esconder arquivados' : 'Mostrar arquivados'}
+          </button>
+        </div>
+        {ANOS.map(ano => {
+          const aberto = abertos.includes(ano);
+          const meses = (mostrarArq ? MESES_POR_ANO[ano] : MESES_POR_ANO[ano].filter(m => !arquivados.includes(m)));
+          const temAtual = MESES_POR_ANO[ano].includes(mes);
+          return (
+            <div key={ano} style={{ marginBottom: 6 }}>
+              <button className={"alv-ano " + (temAtual ? 'on' : '')} onClick={() => toggle(ano)}>
+                {aberto ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+                <span>{ano}</span>
+                {temAtual && <span style={{ marginLeft: 'auto', fontSize: 11, color: 'var(--gold-deep)', fontWeight: 700 }}>· {mes}</span>}
+              </button>
+              {aberto && (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, padding: '4px 0 8px 6px' }}>
+                  {meses.map(m => (
+                    <button key={m}
+                      className={"alv-mes " + (m === mes ? 'on' : '') + (arquivados.includes(m) ? ' arq' : '')}
+                      onClick={() => setMes(m)}>
+                      {m}
+                    </button>
+                  ))}
+                  {meses.length === 0 && <span style={{ fontSize: 12, color: 'var(--muted)', fontStyle: 'italic' }}>Todos arquivados.</span>}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* =================== Tabs =================== */
+function Tabs({ tab, setTab }) {
+  const lista = [
+    { id: 'painel', nome: 'Painel' },
+    { id: 'receitas', nome: 'Receitas' },
+    { id: 'despesas', nome: 'Despesas' },
+    { id: 'dividas', nome: 'Dívidas' },
+    { id: 'historico', nome: 'Histórico' },
+  ];
+  return (
+    <div style={{ padding: '10px 20px', background: 'var(--bg)', borderBottom: '1px solid var(--line)' }}>
+      <div style={{ maxWidth: 1100, margin: '0 auto', display: 'flex', gap: 4, overflowX: 'auto' }}>
+        {lista.map(t => (
+          <button key={t.id} className={"alv-tab " + (tab === t.id ? 'on' : '')} onClick={() => setTab(t.id)}>
+            {t.nome}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* =================== helpers de cálculo =================== */
+const receitasDoMes = (receitas, m) => receitas.filter(r => r.mes === m);
+const despesasDoMes = (despesas, m) =>
+  despesas.flatMap(d => d.parcelas
+    .map((p, i) => ({ ...p, despesa: d, numero: i + 1, total: d.parcelas.length }))
+    .filter(p => p.mes === m));
+const totalReceitas = (receitas, m) => receitasDoMes(receitas, m).reduce((s, r) => s + (+r.valor || 0), 0);
+const totalDespesas = (despesas, m) => despesasDoMes(despesas, m).reduce((s, p) => s + (+p.valor || 0), 0);
+
+/* =================== Linha expansível da tabela =================== */
+function LinhaMes({ m, receitas, despesas, atual, onSelecionar }) {
+  const [aberta, setAberta] = useState(false);
+  const rec = totalReceitas(receitas, m);
+  const desp = totalDespesas(despesas, m);
+  const saldo = rec - desp;
+  const recList = receitasDoMes(receitas, m);
+  const despList = despesasDoMes(despesas, m);
+  return (
+    <>
+      <tr className={atual ? 'atual' : ''} onClick={() => setAberta(!aberta)}>
+        <td style={{ fontWeight: 700 }}>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+            {aberta ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+            {m}
+          </span>
+        </td>
+        <td style={{ color: 'var(--receita-deep)', fontWeight: 700 }}>{brl(rec)}</td>
+        <td style={{ color: 'var(--despesa-deep)', fontWeight: 700 }}>{brl(desp)}</td>
+        <td style={{ color: saldo >= 0 ? 'var(--receita-deep)' : 'var(--divida-deep)', fontWeight: 700 }}>{brl(saldo)}</td>
+      </tr>
+      {aberta && (
+        <tr>
+          <td colSpan="4" className="alv-tbl-detalhe">
+            {recList.length === 0 && despList.length === 0 && (
+              <div style={{ color: 'var(--muted)', fontSize: 12.5, fontStyle: 'italic' }}>Sem lançamentos.</div>
+            )}
+            {recList.length > 0 && (
+              <div style={{ marginBottom: despList.length > 0 ? 12 : 0 }}>
+                <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: '.06em', color: 'var(--receita-deep)', marginBottom: 6 }}>RECEITAS</div>
+                {recList.map(r => (
+                  <div key={r.id} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', fontSize: 12.5, gap: 10 }}>
+                    <span><span style={{ marginRight: 6 }}>{catRec(r.categoria).emoji}</span>{r.descricao}</span>
+                    <span style={{ fontWeight: 700, color: 'var(--receita-deep)', whiteSpace: 'nowrap' }}>{brl(r.valor)}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+            {despList.length > 0 && (
+              <div>
+                <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: '.06em', color: 'var(--despesa-deep)', marginBottom: 6 }}>DESPESAS</div>
+                {despList.map((p, i) => (
+                  <div key={p.despesa.id + '-' + i} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', fontSize: 12.5, gap: 10 }}>
+                    <span>
+                      <span style={{ marginRight: 6 }}>{catDesp(p.despesa.categoria).emoji}</span>
+                      {p.despesa.descricao}
+                      {p.total > 1 && <span style={{ color: 'var(--muted)', fontSize: 11 }}> · parcela {p.numero}/{p.total}</span>}
+                    </span>
+                    <span style={{ fontWeight: 700, color: 'var(--despesa-deep)', whiteSpace: 'nowrap' }}>{brl(p.valor)}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+            <div style={{ marginTop: 12 }}>
+              <button className="alv-btn alv-btn-ghost" onClick={(e) => { e.stopPropagation(); onSelecionar(m); }}
+                style={{ fontSize: 12, padding: '6px 10px', color: 'var(--gold-deep)', fontWeight: 700 }}>
+                Abrir {m} →
+              </button>
+            </div>
+          </td>
+        </tr>
+      )}
+    </>
+  );
+}
+
+/* =================== Painel =================== */
+function Painel({ mes, setMes, receitas, despesas, dividas }) {
+  const rec = totalReceitas(receitas, mes);
+  const desp = totalDespesas(despesas, mes);
+  const saldo = rec - desp;
+  const dividaEmAberto = dividas.filter(d => d.status !== 'Quitada').reduce((s, d) => s + Math.max(0, (+d.valorTotal || 0) - (+d.valorPago || 0)), 0);
+
+  const porCat = {};
+  despesasDoMes(despesas, mes).forEach(p => {
+    porCat[p.despesa.categoria] = (porCat[p.despesa.categoria] || 0) + (+p.valor || 0);
+  });
+  const cats = Object.entries(porCat).sort((a, b) => b[1] - a[1]);
+
+  // tabela de meses: mostra todos os meses que têm algum lançamento
+  const mesesComDados = MESES.filter(m =>
+    totalReceitas(receitas, m) > 0 || totalDespesas(despesas, m) > 0
+  );
+
+  return (
+    <div className="alv-fade" style={{ padding: '20px', maxWidth: 1100, margin: '0 auto' }}>
+      <h2 style={{ fontSize: 24, fontWeight: 700, margin: '0 0 18px', letterSpacing: '-.01em' }}>Painel · {mes}</h2>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(170px,1fr))', gap: 12, marginBottom: 22 }}>
+        <div className="alv-stat receita">
+          <div className="alv-stat-label">Receitas</div>
+          <div className="alv-stat-value">{brl(rec)}</div>
+          <div className="alv-stat-sub">{receitasDoMes(receitas, mes).length} {receitasDoMes(receitas, mes).length === 1 ? 'lançamento' : 'lançamentos'}</div>
+        </div>
+        <div className="alv-stat despesa">
+          <div className="alv-stat-label">Despesas</div>
+          <div className="alv-stat-value">{brl(desp)}</div>
+          <div className="alv-stat-sub">{despesasDoMes(despesas, mes).length} {despesasDoMes(despesas, mes).length === 1 ? 'lançamento' : 'lançamentos'}</div>
+        </div>
+        <div className="alv-stat divida">
+          <div className="alv-stat-label">Dívidas em aberto</div>
+          <div className="alv-stat-value">{brl(dividaEmAberto)}</div>
+          <div className="alv-stat-sub">{dividas.filter(d => d.status !== 'Quitada').length} dívida(s)</div>
+        </div>
+        <div className={"alv-stat " + (saldo >= 0 ? 'saldo-pos' : 'saldo-neg')}>
+          <div className="alv-stat-label">Saldo do mês</div>
+          <div className="alv-stat-value">{brl(saldo)}</div>
+          <div className="alv-stat-sub">
+            {rec > 0 ? `${((desp / rec) * 100).toFixed(1)}% comprometido` : 'Adicione receitas'}
+          </div>
+        </div>
+      </div>
+
+      {cats.length > 0 && (
+        <div className="alv-card alv-shadow" style={{ padding: 18, marginBottom: 18 }}>
+          <div style={{ marginBottom: 12 }}><span className="alv-label">Gastos por categoria · {mes}</span></div>
+          {cats.map(([catId, valor]) => {
+            const c = catDesp(catId);
+            const pct = desp > 0 ? (valor / desp) * 100 : 0;
+            return (
+              <div key={catId} style={{ marginBottom: 11 }}>
+                <div className="alv-row" style={{ justifyContent: 'space-between', marginBottom: 5, fontSize: 13 }}>
+                  <span style={{ fontWeight: 700 }}>{c.emoji} {c.nome}</span>
+                  <span style={{ fontWeight: 700 }}>{brl(valor)} <span style={{ color: 'var(--muted)', fontWeight: 400 }}>· {pct.toFixed(0)}%</span></span>
+                </div>
+                <div style={{ height: 6, background: 'var(--surface2)', borderRadius: 3, overflow: 'hidden' }}>
+                  <div style={{ height: '100%', width: pct + '%', background: 'var(--despesa)', transition: 'width .3s' }} />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      <div className="alv-card alv-shadow" style={{ padding: 18 }}>
+        <div style={{ marginBottom: 10 }}>
+          <span className="alv-label">Resumo por mês</span>
+          <div style={{ fontSize: 11.5, color: 'var(--muted)', marginTop: 4 }}>Toque numa linha para ver os lançamentos do mês.</div>
+        </div>
+        {mesesComDados.length === 0 ? (
+          <div style={{ padding: 24, textAlign: 'center', color: 'var(--muted)', fontSize: 13 }}>
+            Ainda não há lançamentos. Adicione receitas e despesas para ver o resumo aparecer aqui.
+          </div>
+        ) : (
+          <div style={{ overflowX: 'auto' }}>
+            <table className="alv-tbl">
+              <thead>
+                <tr><th>Mês</th><th>Receitas</th><th>Despesas</th><th>Saldo</th></tr>
+              </thead>
+              <tbody>
+                {mesesComDados.map(m => (
+                  <LinhaMes key={m} m={m} receitas={receitas} despesas={despesas} atual={m === mes} onSelecionar={setMes} />
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* =================== Form de Receita =================== */
+function FormReceita({ mes, inicial, onSalvar, onCancelar }) {
+  const [tipo, setTipo] = useState(inicial?.categoria || 'salario');
+  const [descricao, setDescricao] = useState(inicial?.descricao || '');
+  const [valor, setValor] = useState(inicial ? String(inicial.valor).replace('.', ',') : '');
+  const [mesEscolhido, setMesEscolhido] = useState(inicial?.mes || mes);
+
+  const salvar = () => {
+    const v = numBR(valor);
+    if (!descricao.trim() || v <= 0) return;
+    onSalvar({
+      id: inicial?.id || uid(),
+      mes: mesEscolhido, categoria: tipo, descricao: descricao.trim(), valor: v,
+      criadaEm: inicial?.criadaEm || new Date().toISOString(),
+    });
+  };
+
+  return (
+    <div className="alv-card alv-shadow alv-fade" style={{ padding: 18, marginBottom: 14, borderColor: 'var(--receita-line)' }}>
+      <span className="alv-label">{inicial ? 'Editar receita' : 'Nova receita'}</span>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginTop: 10 }}>
+        <div style={{ gridColumn: '1/-1' }}>
+          <input className="alv-input" placeholder="Descrição (ex: Salário Empresa X)"
+            value={descricao} onChange={(e) => setDescricao(e.target.value)} autoFocus />
+        </div>
+        <div>
+          <select className="alv-input" value={tipo} onChange={(e) => setTipo(e.target.value)}>
+            {CAT_RECEITA.map(c => <option key={c.id} value={c.id}>{c.emoji} {c.nome}</option>)}
+          </select>
+        </div>
+        <div>
+          <input className="alv-input" type="text" inputMode="decimal" placeholder="R$ 0,00"
+            value={valor} onChange={(e) => setValor(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && salvar()} />
+        </div>
+        <div style={{ gridColumn: '1/-1' }}>
+          <select className="alv-input" value={mesEscolhido} onChange={(e) => setMesEscolhido(e.target.value)}>
+            {MESES.map(m => <option key={m} value={m}>{m}</option>)}
+          </select>
+        </div>
+      </div>
+      <div className="alv-row" style={{ gap: 8, marginTop: 12, justifyContent: 'flex-end' }}>
+        <button className="alv-btn alv-btn-ghost" onClick={onCancelar} style={{ padding: '8px 14px', fontSize: 13 }}>Cancelar</button>
+        <button className="alv-btn alv-btn-primary" onClick={salvar} style={{ padding: '8px 14px', fontSize: 13 }}>
+          {inicial ? 'Salvar' : 'Adicionar'}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* =================== Receitas =================== */
+function Receitas({ mes, receitas, setReceitas }) {
+  const [add, setAdd] = useState(false);
+  const [editando, setEditando] = useState(null);
+
+  const doMes = receitasDoMes(receitas, mes);
+  const total = doMes.reduce((s, r) => s + (+r.valor || 0), 0);
+
+  const porCat = {};
+  doMes.forEach(r => { porCat[r.categoria] = (porCat[r.categoria] || 0) + (+r.valor || 0); });
+
+  const salvar = (item) => {
+    setReceitas(prev => {
+      const i = prev.findIndex(r => r.id === item.id);
+      if (i >= 0) { const next = [...prev]; next[i] = item; return next; }
+      return [item, ...prev];
+    });
+    setAdd(false); setEditando(null);
+  };
+
+  const remover = (id) => {
+    if (window.confirm('Apagar esta receita?')) setReceitas(prev => prev.filter(r => r.id !== id));
+  };
+
+  return (
+    <div className="alv-fade" style={{ padding: '20px', maxWidth: 1100, margin: '0 auto' }}>
+      <div className="alv-row" style={{ justifyContent: 'space-between', marginBottom: 16, flexWrap: 'wrap', gap: 10 }}>
+        <h2 style={{ fontSize: 24, fontWeight: 700, margin: 0, letterSpacing: '-.01em' }}>Receitas · {mes}</h2>
+        {!add && !editando && (
+          <button className="alv-btn alv-btn-primary" onClick={() => setAdd(true)}
+            style={{ padding: '9px 14px', fontSize: 13, display: 'flex', alignItems: 'center', gap: 5 }}>
+            <Plus size={14} /> Nova receita
+          </button>
+        )}
+      </div>
+
+      <div className="alv-stat receita" style={{ marginBottom: 18 }}>
+        <div className="alv-stat-label">Total de receitas</div>
+        <div className="alv-stat-value">{brl(total)}</div>
+        <div className="alv-stat-sub">{doMes.length} {doMes.length === 1 ? 'lançamento' : 'lançamentos'} em {mes}</div>
+      </div>
+
+      {add && <FormReceita mes={mes} onSalvar={salvar} onCancelar={() => setAdd(false)} />}
+      {editando && <FormReceita mes={mes} inicial={editando} onSalvar={salvar} onCancelar={() => setEditando(null)} />}
+
+      {Object.keys(porCat).length > 0 && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(160px,1fr))', gap: 10, marginBottom: 18 }}>
+          {CAT_RECEITA.filter(c => porCat[c.id]).map(c => (
+            <div key={c.id} className="alv-card" style={{ padding: '12px 14px' }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--muted)', marginBottom: 3, textTransform: 'uppercase', letterSpacing: '.04em' }}>
+                {c.emoji} {c.nome}
+              </div>
+              <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--receita-deep)' }}>{brl(porCat[c.id])}</div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {doMes.length === 0 && !add && (
+        <div className="alv-card" style={{ padding: 36, textAlign: 'center', color: 'var(--muted)', fontSize: 14 }}>
+          Nenhuma receita lançada em {mes}.
+        </div>
+      )}
+
+      {doMes.length > 0 && (
+        <div>
+          <span className="alv-label" style={{ display: 'block', marginBottom: 8 }}>Lançamentos</span>
+          {doMes.map(r => {
+            const c = catRec(r.categoria);
+            return (
+              <div key={r.id} className="alv-item">
+                <span className="alv-cat-tag">{c.emoji} {c.nome}</span>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontWeight: 700, fontSize: 14, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.descricao}</div>
+                </div>
+                <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--receita-deep)', whiteSpace: 'nowrap' }}>{brl(r.valor)}</div>
+                <button className="alv-btn alv-btn-ghost" onClick={() => setEditando(r)} title="Editar" style={{ padding: 6 }}>
+                  <Pencil size={14} />
+                </button>
+                <button className="alv-btn alv-btn-ghost" onClick={() => remover(r.id)} title="Apagar" style={{ padding: 6, color: 'var(--divida)' }}>
+                  <Trash2 size={14} />
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* =================== Form de Despesa (com parcelas) =================== */
+function FormDespesa({ mes, inicial, onSalvar, onCancelar }) {
+  const [cat, setCat] = useState(inicial?.categoria || 'moradia');
+  const [descricao, setDescricao] = useState(inicial?.descricao || '');
+  const totalInicial = inicial ? inicial.parcelas.reduce((s, p) => s + (+p.valor || 0), 0) : 0;
+  const [valorTotal, setValorTotal] = useState(inicial ? String(totalInicial.toFixed(2)).replace('.', ',') : '');
+  const [obs, setObs] = useState(inicial?.obs || '');
+  const [data, setData] = useState(inicial?.data || new Date().toISOString().slice(0, 10));
+  const [numParcelas, setNumParcelas] = useState(inicial ? inicial.parcelas.length : 1);
+  const [mesInicio, setMesInicio] = useState(inicial?.parcelas[0]?.mes || mes);
+
+  const salvar = () => {
+    const v = numBR(valorTotal);
+    const n = Math.max(1, parseInt(numParcelas) || 1);
+    if (!descricao.trim() || v <= 0) return;
+    const parcelas = gerarParcelas(v, n, mesInicio);
+    onSalvar({
+      id: inicial?.id || uid(),
+      categoria: cat, descricao: descricao.trim(), obs: obs.trim(), data,
+      parcelas,
+      criadaEm: inicial?.criadaEm || new Date().toISOString(),
+    });
+  };
+
+  const n = Math.max(1, parseInt(numParcelas) || 1);
+  const previa = n > 1 ? `${n}x de ${brl(numBR(valorTotal) / n)}` : null;
+
+  return (
+    <div className="alv-card alv-shadow alv-fade" style={{ padding: 18, marginBottom: 14, borderColor: 'var(--despesa-line)' }}>
+      <span className="alv-label">{inicial ? 'Editar despesa' : 'Nova despesa'}</span>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginTop: 10 }}>
+        <div style={{ gridColumn: '1/-1' }}>
+          <input className="alv-input" placeholder="Descrição (ex: Geladeira, conta de luz...)"
+            value={descricao} onChange={(e) => setDescricao(e.target.value)} autoFocus />
+        </div>
+        <div>
+          <select className="alv-input" value={cat} onChange={(e) => setCat(e.target.value)}>
+            {CAT_DESPESA.map(c => <option key={c.id} value={c.id}>{c.emoji} {c.nome}</option>)}
+          </select>
+        </div>
+        <div>
+          <input className="alv-input" type="text" inputMode="decimal" placeholder="Valor total (R$)"
+            value={valorTotal} onChange={(e) => setValorTotal(e.target.value)} />
+        </div>
+        <div>
+          <select className="alv-input" value={numParcelas} onChange={(e) => setNumParcelas(e.target.value)}>
+            <option value="1">À vista (1x)</option>
+            {[2,3,4,5,6,7,8,9,10,11,12,15,18,24].map(n => <option key={n} value={n}>{n}x parcelado</option>)}
+          </select>
+        </div>
+        <div>
+          <select className="alv-input" value={mesInicio} onChange={(e) => setMesInicio(e.target.value)}>
+            {MESES.map(m => <option key={m} value={m}>{n > 1 ? 'Primeira em ' : 'No mês de '}{m}</option>)}
+          </select>
+        </div>
+        <div>
+          <input className="alv-input" type="date" value={data} onChange={(e) => setData(e.target.value)} />
+        </div>
+        <div style={{ gridColumn: '1/-1' }}>
+          <input className="alv-input" placeholder="Observações (opcional)"
+            value={obs} onChange={(e) => setObs(e.target.value)} />
+        </div>
+      </div>
+      {previa && (
+        <div style={{ marginTop: 10, padding: '8px 12px', background: 'var(--despesa-soft)', borderRadius: 8, fontSize: 12.5, color: 'var(--despesa-deep)', fontWeight: 700 }}>
+          Será dividido em {previa}, começando em {mesInicio}.
+        </div>
+      )}
+      <div className="alv-row" style={{ gap: 8, marginTop: 12, justifyContent: 'flex-end' }}>
+        <button className="alv-btn alv-btn-ghost" onClick={onCancelar} style={{ padding: '8px 14px', fontSize: 13 }}>Cancelar</button>
+        <button className="alv-btn alv-btn-primary" onClick={salvar} style={{ padding: '8px 14px', fontSize: 13 }}>
+          {inicial ? 'Salvar' : 'Adicionar'}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* =================== Despesas =================== */
+function Despesas({ mes, despesas, setDespesas }) {
+  const [add, setAdd] = useState(false);
+  const [editando, setEditando] = useState(null);
+  const [filtroCat, setFiltroCat] = useState('todas');
+
+  const doMes = despesasDoMes(despesas, mes);
+  const filtradas = filtroCat === 'todas' ? doMes : doMes.filter(p => p.despesa.categoria === filtroCat);
+  const total = doMes.reduce((s, p) => s + (+p.valor || 0), 0);
+
+  const porCat = {};
+  doMes.forEach(p => { porCat[p.despesa.categoria] = (porCat[p.despesa.categoria] || 0) + (+p.valor || 0); });
+  const ranking = Object.entries(porCat).sort((a, b) => b[1] - a[1]);
+  const top = ranking[0];
+
+  const salvar = (item) => {
+    setDespesas(prev => {
+      const i = prev.findIndex(d => d.id === item.id);
+      if (i >= 0) { const next = [...prev]; next[i] = item; return next; }
+      return [item, ...prev];
+    });
+    setAdd(false); setEditando(null);
+  };
+
+  const remover = (id) => {
+    if (window.confirm('Apagar esta despesa (e todas as parcelas)?')) setDespesas(prev => prev.filter(d => d.id !== id));
+  };
+
+  return (
+    <div className="alv-fade" style={{ padding: '20px', maxWidth: 1100, margin: '0 auto' }}>
+      <div className="alv-row" style={{ justifyContent: 'space-between', marginBottom: 16, flexWrap: 'wrap', gap: 10 }}>
+        <h2 style={{ fontSize: 24, fontWeight: 700, margin: 0, letterSpacing: '-.01em' }}>Despesas · {mes}</h2>
+        {!add && !editando && (
+          <button className="alv-btn alv-btn-primary" onClick={() => setAdd(true)}
+            style={{ padding: '9px 14px', fontSize: 13, display: 'flex', alignItems: 'center', gap: 5 }}>
+            <Plus size={14} /> Nova despesa
+          </button>
+        )}
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(180px,1fr))', gap: 12, marginBottom: 18 }}>
+        <div className="alv-stat despesa">
+          <div className="alv-stat-label">Total de despesas</div>
+          <div className="alv-stat-value">{brl(total)}</div>
+          <div className="alv-stat-sub">{doMes.length} {doMes.length === 1 ? 'lançamento' : 'lançamentos'}</div>
+        </div>
+        {top && (
+          <div className="alv-stat">
+            <div className="alv-stat-label">Maior categoria</div>
+            <div className="alv-stat-value" style={{ fontSize: 20 }}>{catDesp(top[0]).emoji} {catDesp(top[0]).nome}</div>
+            <div className="alv-stat-sub">{brl(top[1])} · {((top[1] / total) * 100).toFixed(0)}% do total</div>
+          </div>
+        )}
+      </div>
+
+      {add && <FormDespesa mes={mes} onSalvar={salvar} onCancelar={() => setAdd(false)} />}
+      {editando && <FormDespesa mes={mes} inicial={editando} onSalvar={salvar} onCancelar={() => setEditando(null)} />}
+
+      {Object.keys(porCat).length > 0 && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(140px,1fr))', gap: 8, marginBottom: 18 }}>
+          <button onClick={() => setFiltroCat('todas')}
+            style={{
+              padding: '10px 12px', textAlign: 'left', cursor: 'pointer', borderRadius: 11,
+              border: filtroCat === 'todas' ? '2px solid var(--gold)' : '1px solid var(--line)',
+              background: 'var(--surface)', fontFamily: 'inherit',
+            }}>
+            <div style={{ fontSize: 10.5, fontWeight: 700, color: 'var(--muted)', letterSpacing: '.05em' }}>TODAS</div>
+            <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--despesa-deep)' }}>{brl(total)}</div>
+          </button>
+          {ranking.map(([catId, valor]) => {
+            const c = catDesp(catId);
+            return (
+              <button key={catId}
+                onClick={() => setFiltroCat(filtroCat === catId ? 'todas' : catId)}
+                style={{
+                  padding: '10px 12px', textAlign: 'left', cursor: 'pointer', borderRadius: 11,
+                  border: filtroCat === catId ? '2px solid var(--gold)' : '1px solid var(--line)',
+                  background: 'var(--surface)', fontFamily: 'inherit',
+                }}>
+                <div style={{ fontSize: 10.5, fontWeight: 700, color: 'var(--muted)', letterSpacing: '.05em' }}>{c.emoji} {c.nome.toUpperCase()}</div>
+                <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--despesa-deep)' }}>{brl(valor)}</div>
+              </button>
+            );
+          })}
+        </div>
+      )}
+
+      {filtradas.length === 0 && !add && (
+        <div className="alv-card" style={{ padding: 36, textAlign: 'center', color: 'var(--muted)', fontSize: 14 }}>
+          {filtroCat === 'todas'
+            ? `Nenhuma despesa em ${mes}.`
+            : `Nenhuma despesa de ${catDesp(filtroCat).nome} em ${mes}.`}
+        </div>
+      )}
+
+      {filtradas.length > 0 && (
+        <div>
+          <span className="alv-label" style={{ display: 'block', marginBottom: 8 }}>
+            Lançamentos {filtroCat !== 'todas' && `· ${catDesp(filtroCat).nome}`}
+          </span>
+          {filtradas.map((p, i) => {
+            const d = p.despesa;
+            const c = catDesp(d.categoria);
+            return (
+              <div key={d.id + '-' + i} className="alv-item" style={{ flexWrap: 'wrap' }}>
+                <span className="alv-cat-tag">{c.emoji} {c.nome}</span>
+                <div style={{ flex: 1, minWidth: 120 }}>
+                  <div style={{ fontWeight: 700, fontSize: 14 }}>
+                    {d.descricao}
+                    {p.total > 1 && <span style={{ fontWeight: 400, fontSize: 12, color: 'var(--muted)' }}> · parcela {p.numero}/{p.total}</span>}
+                  </div>
+                  {(d.obs || d.data) && (
+                    <div style={{ fontSize: 11.5, color: 'var(--muted)', marginTop: 2 }}>
+                      {d.data && new Date(d.data + 'T00:00:00').toLocaleDateString('pt-BR')}
+                      {d.obs && (d.data ? ' · ' : '') + d.obs}
+                    </div>
+                  )}
+                </div>
+                <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--despesa-deep)', whiteSpace: 'nowrap' }}>{brl(p.valor)}</div>
+                <button className="alv-btn alv-btn-ghost" onClick={() => setEditando(d)} title="Editar" style={{ padding: 6 }}>
+                  <Pencil size={14} />
+                </button>
+                <button className="alv-btn alv-btn-ghost" onClick={() => remover(d.id)} title="Apagar" style={{ padding: 6, color: 'var(--divida)' }}>
+                  <Trash2 size={14} />
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* =================== Form de Dívida =================== */
+function FormDivida({ inicial, onSalvar, onCancelar }) {
+  const [nome, setNome] = useState(inicial?.nome || '');
+  const [valorTotal, setValorTotal] = useState(inicial ? String((+inicial.valorTotal || 0).toFixed(2)).replace('.', ',') : '');
+  const [valorPago, setValorPago] = useState(inicial ? String((+inicial.valorPago || 0).toFixed(2)).replace('.', ',') : '0,00');
+  const [parcelas, setParcelas] = useState(inicial?.parcelas || '');
+  const [juros, setJuros] = useState(inicial ? String((+inicial.juros || 0).toFixed(2)).replace('.', ',') : '');
+  const [status, setStatus] = useState(inicial?.status || 'Em aberto');
+  const [obs, setObs] = useState(inicial?.obs || '');
+
+  const salvar = () => {
+    const vt = numBR(valorTotal);
+    const vp = numBR(valorPago);
+    if (!nome.trim() || vt <= 0) return;
+    onSalvar({
+      id: inicial?.id || uid(),
+      nome: nome.trim(), valorTotal: vt, valorPago: Math.min(vp, vt),
+      parcelas: parcelas || '', juros: numBR(juros), status, obs: obs.trim(),
+      criadaEm: inicial?.criadaEm || new Date().toISOString(),
+    });
+  };
+
+  return (
+    <div className="alv-card alv-shadow alv-fade" style={{ padding: 18, marginBottom: 14, borderColor: 'var(--divida-line)' }}>
+      <span className="alv-label">{inicial ? 'Editar dívida' : 'Nova dívida'}</span>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginTop: 10 }}>
+        <div style={{ gridColumn: '1/-1' }}>
+          <input className="alv-input" placeholder="Nome da dívida (ex: Empréstimo X, Fatura Y)"
+            value={nome} onChange={(e) => setNome(e.target.value)} autoFocus />
+        </div>
+        <div>
+          <input className="alv-input" type="text" inputMode="decimal" placeholder="Valor total (R$)"
+            value={valorTotal} onChange={(e) => setValorTotal(e.target.value)} />
+        </div>
+        <div>
+          <input className="alv-input" type="text" inputMode="decimal" placeholder="Valor já pago (R$)"
+            value={valorPago} onChange={(e) => setValorPago(e.target.value)} />
+        </div>
+        <div>
+          <input className="alv-input" type="text" placeholder="Parcelas (ex: 10x, livre)"
+            value={parcelas} onChange={(e) => setParcelas(e.target.value)} />
+        </div>
+        <div>
+          <input className="alv-input" type="text" inputMode="decimal" placeholder="Juros % a.m. (opcional)"
+            value={juros} onChange={(e) => setJuros(e.target.value)} />
+        </div>
+        <div>
+          <select className="alv-input" value={status} onChange={(e) => setStatus(e.target.value)}>
+            {STATUS_DIVIDA.map(s => <option key={s} value={s}>{s}</option>)}
+          </select>
+        </div>
+        <div style={{ gridColumn: '1/-1' }}>
+          <input className="alv-input" placeholder="Observações (opcional)"
+            value={obs} onChange={(e) => setObs(e.target.value)} />
+        </div>
+      </div>
+      <div className="alv-row" style={{ gap: 8, marginTop: 12, justifyContent: 'flex-end' }}>
+        <button className="alv-btn alv-btn-ghost" onClick={onCancelar} style={{ padding: '8px 14px', fontSize: 13 }}>Cancelar</button>
+        <button className="alv-btn alv-btn-primary" onClick={salvar} style={{ padding: '8px 14px', fontSize: 13 }}>
+          {inicial ? 'Salvar' : 'Adicionar'}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* =================== Dívidas =================== */
+function Dividas({ dividas, setDividas }) {
+  const [add, setAdd] = useState(false);
+  const [editando, setEditando] = useState(null);
+
+  const total = dividas.reduce((s, d) => s + (+d.valorTotal || 0), 0);
+  const pago = dividas.reduce((s, d) => s + (+d.valorPago || 0), 0);
+  const restante = Math.max(0, total - pago);
+  const emAberto = dividas.filter(d => d.status !== 'Quitada');
+  const pctGeral = total > 0 ? (pago / total) * 100 : 0;
+
+  const salvar = (item) => {
+    setDividas(prev => {
+      const i = prev.findIndex(d => d.id === item.id);
+      // auto-marca como Quitada se valorPago >= valorTotal
+      if (item.valorPago >= item.valorTotal && item.status !== 'Quitada') item.status = 'Quitada';
+      if (i >= 0) { const next = [...prev]; next[i] = item; return next; }
+      return [item, ...prev];
+    });
+    setAdd(false); setEditando(null);
+  };
+
+  const remover = (id) => {
+    if (window.confirm('Apagar esta dívida?')) setDividas(prev => prev.filter(d => d.id !== id));
+  };
+
+  const quitar = (d) => {
+    salvar({ ...d, valorPago: d.valorTotal, status: 'Quitada' });
+  };
+
+  return (
+    <div className="alv-fade" style={{ padding: '20px', maxWidth: 1100, margin: '0 auto' }}>
+      <div className="alv-row" style={{ justifyContent: 'space-between', marginBottom: 16, flexWrap: 'wrap', gap: 10 }}>
+        <h2 style={{ fontSize: 24, fontWeight: 700, margin: 0, letterSpacing: '-.01em' }}>Dívidas</h2>
+        {!add && !editando && (
+          <button className="alv-btn alv-btn-primary" onClick={() => setAdd(true)}
+            style={{ padding: '9px 14px', fontSize: 13, display: 'flex', alignItems: 'center', gap: 5 }}>
+            <Plus size={14} /> Nova dívida
+          </button>
+        )}
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(170px,1fr))', gap: 12, marginBottom: 18 }}>
+        <div className="alv-stat divida">
+          <div className="alv-stat-label">Total das dívidas</div>
+          <div className="alv-stat-value">{brl(total)}</div>
+          <div className="alv-stat-sub">{dividas.length} dívida(s) cadastrada(s)</div>
+        </div>
+        <div className="alv-stat receita">
+          <div className="alv-stat-label">Já pago</div>
+          <div className="alv-stat-value">{brl(pago)}</div>
+          <div className="alv-stat-sub">{pctGeral.toFixed(1)}% do total</div>
+        </div>
+        <div className="alv-stat divida">
+          <div className="alv-stat-label">Restante a pagar</div>
+          <div className="alv-stat-value">{brl(restante)}</div>
+          <div className="alv-stat-sub">{emAberto.length} em aberto</div>
+        </div>
+      </div>
+
+      {dividas.length > 0 && (
+        <div className="alv-card alv-shadow" style={{ padding: 16, marginBottom: 18 }}>
+          <div className="alv-row" style={{ justifyContent: 'space-between', marginBottom: 8 }}>
+            <span className="alv-label">Progresso geral</span>
+            <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--receita-deep)' }}>{pctGeral.toFixed(1)}%</span>
+          </div>
+          <div className="alv-progress"><div style={{ width: pctGeral + '%' }} /></div>
+        </div>
+      )}
+
+      {add && <FormDivida onSalvar={salvar} onCancelar={() => setAdd(false)} />}
+      {editando && <FormDivida inicial={editando} onSalvar={salvar} onCancelar={() => setEditando(null)} />}
+
+      {dividas.length === 0 && !add && (
+        <div className="alv-card" style={{ padding: 36, textAlign: 'center', color: 'var(--muted)', fontSize: 14 }}>
+          Nenhuma dívida cadastrada. Que ótimo! Se aparecer alguma, é só clicar em <b>Nova dívida</b> acima.
+        </div>
+      )}
+
+      {dividas.length > 0 && (
+        <div>
+          <span className="alv-label" style={{ display: 'block', marginBottom: 8 }}>Dívidas cadastradas</span>
+          {dividas.map(d => {
+            const vp = +d.valorPago || 0;
+            const vt = +d.valorTotal || 0;
+            const rest = Math.max(0, vt - vp);
+            const pct = vt > 0 ? (vp / vt) * 100 : 0;
+            const statusClass = d.status === 'Quitada' ? 'quitada' : d.status === 'Negociada' ? 'negociada' : 'aberto';
+            return (
+              <div key={d.id} className="alv-card alv-shadow" style={{ padding: 16, marginBottom: 12 }}>
+                <div className="alv-row" style={{ justifyContent: 'space-between', marginBottom: 8, flexWrap: 'wrap', gap: 10 }}>
+                  <div style={{ minWidth: 0, flex: 1 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 4 }}>
+                      <span style={{ fontWeight: 700, fontSize: 15 }}>{d.nome}</span>
+                      <span className={"alv-badge " + statusClass}>{d.status}</span>
+                    </div>
+                    <div style={{ fontSize: 11.5, color: 'var(--muted)' }}>
+                      {d.parcelas && <span>{d.parcelas} · </span>}
+                      {(+d.juros) > 0 && <span>{(+d.juros).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}% a.m. · </span>}
+                      {d.obs}
+                    </div>
+                  </div>
+                  <div className="alv-row" style={{ gap: 4 }}>
+                    {d.status !== 'Quitada' && (
+                      <button className="alv-btn alv-btn-ghost" onClick={() => quitar(d)} title="Marcar como quitada"
+                        style={{ padding: 6, color: 'var(--receita)' }}>
+                        <Check size={16} />
+                      </button>
+                    )}
+                    <button className="alv-btn alv-btn-ghost" onClick={() => setEditando(d)} title="Editar" style={{ padding: 6 }}>
+                      <Pencil size={14} />
+                    </button>
+                    <button className="alv-btn alv-btn-ghost" onClick={() => remover(d.id)} title="Apagar"
+                      style={{ padding: 6, color: 'var(--divida)' }}>
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: 18, flexWrap: 'wrap', marginBottom: 8, fontSize: 12 }}>
+                  <div>
+                    <div style={{ color: 'var(--muted)', fontWeight: 700, fontSize: 10, letterSpacing: '.05em' }}>TOTAL</div>
+                    <div style={{ fontWeight: 700, color: 'var(--divida-deep)' }}>{brl(vt)}</div>
+                  </div>
+                  <div>
+                    <div style={{ color: 'var(--muted)', fontWeight: 700, fontSize: 10, letterSpacing: '.05em' }}>PAGO</div>
+                    <div style={{ fontWeight: 700, color: 'var(--receita-deep)' }}>{brl(vp)}</div>
+                  </div>
+                  <div>
+                    <div style={{ color: 'var(--muted)', fontWeight: 700, fontSize: 10, letterSpacing: '.05em' }}>RESTANTE</div>
+                    <div style={{ fontWeight: 700, color: 'var(--divida-deep)' }}>{brl(rest)}</div>
+                  </div>
+                </div>
+                <div className="alv-progress"><div style={{ width: pct + '%' }} /></div>
+                <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 5, textAlign: 'right' }}>{pct.toFixed(1)}% pago</div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* =================== Histórico =================== */
+function Historico({ receitas, despesas, arquivados, setArquivados, setMes }) {
+  const dados = MESES.map(m => {
+    const r = totalReceitas(receitas, m);
+    const d = totalDespesas(despesas, m);
+    return { mes: m, receitas: r, despesas: d, saldo: r - d, arquivado: arquivados.includes(m), temDados: r > 0 || d > 0 };
+  });
+
+  const toggleArq = (m) => {
+    setArquivados(prev => prev.includes(m) ? prev.filter(x => x !== m) : [...prev, m]);
+  };
+
+  const comDados = dados.filter(x => x.temDados);
+
+  return (
+    <div className="alv-fade" style={{ padding: '20px', maxWidth: 1100, margin: '0 auto' }}>
+      <h2 style={{ fontSize: 24, fontWeight: 700, margin: '0 0 18px', letterSpacing: '-.01em' }}>Histórico</h2>
+
+      {comDados.length === 0 ? (
+        <div className="alv-card" style={{ padding: 36, textAlign: 'center', color: 'var(--muted)', fontSize: 14 }}>
+          Sem histórico ainda. Adicione lançamentos em algum mês para começar a ver a evolução.
+        </div>
+      ) : (
+        <>
+          <div className="alv-card alv-shadow" style={{ padding: 18, marginBottom: 18 }}>
+            <span className="alv-label" style={{ display: 'block', marginBottom: 10 }}>Receitas × Despesas</span>
+            <div style={{ height: 260 }}>
+              <ResponsiveContainer>
+                <BarChart data={comDados.map(x => ({ mes: x.mes, Receitas: +x.receitas.toFixed(2), Despesas: +x.despesas.toFixed(2) }))}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e7e5e4" vertical={false} />
+                  <XAxis dataKey="mes" tick={{ fontSize: 10, fill: '#78716c' }} />
+                  <YAxis tick={{ fontSize: 10, fill: '#78716c' }} tickFormatter={(v) => 'R$ ' + (v / 1000).toFixed(0) + 'k'} />
+                  <Tooltip formatter={(v) => brl(v)} contentStyle={{ fontSize: 12, fontFamily: 'Carlito,sans-serif' }} />
+                  <Legend wrapperStyle={{ fontSize: 12 }} />
+                  <Bar dataKey="Receitas" fill="#008000" radius={[5, 5, 0, 0]} />
+                  <Bar dataKey="Despesas" fill="#ff5c00" radius={[5, 5, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          <div>
+            <span className="alv-label" style={{ display: 'block', marginBottom: 10 }}>Resumo por mês</span>
+            {dados.map(x => (
+              <div key={x.mes} className="alv-item" style={{ opacity: x.arquivado ? .55 : 1, flexWrap: 'wrap' }}>
+                <button onClick={() => setMes(x.mes)} className="alv-btn alv-btn-ghost"
+                  style={{ padding: '5px 10px', fontWeight: 700, minWidth: 78, textAlign: 'left', fontSize: 13 }}>
+                  {x.mes}
+                </button>
+                <div style={{ flex: 1, display: 'flex', gap: 18, flexWrap: 'wrap', minWidth: 0 }}>
+                  <div style={{ fontSize: 12 }}>
+                    <div style={{ color: 'var(--muted)', fontWeight: 700, fontSize: 10, letterSpacing: '.05em' }}>RECEITAS</div>
+                    <div style={{ fontWeight: 700, color: 'var(--receita-deep)' }}>{brl(x.receitas)}</div>
+                  </div>
+                  <div style={{ fontSize: 12 }}>
+                    <div style={{ color: 'var(--muted)', fontWeight: 700, fontSize: 10, letterSpacing: '.05em' }}>DESPESAS</div>
+                    <div style={{ fontWeight: 700, color: 'var(--despesa-deep)' }}>{brl(x.despesas)}</div>
+                  </div>
+                  <div style={{ fontSize: 12 }}>
+                    <div style={{ color: 'var(--muted)', fontWeight: 700, fontSize: 10, letterSpacing: '.05em' }}>SALDO</div>
+                    <div style={{ fontWeight: 700, color: x.saldo >= 0 ? 'var(--receita-deep)' : 'var(--divida-deep)' }}>{brl(x.saldo)}</div>
+                  </div>
+                </div>
+                <button className="alv-btn alv-btn-ghost" onClick={() => toggleArq(x.mes)}
+                  title={x.arquivado ? 'Desarquivar' : 'Arquivar'}
+                  style={{ padding: 6, color: 'var(--muted)' }}>
+                  <Archive size={14} />
+                </button>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+/* =================== Ajustes =================== */
+function Ajustes({ senha, setSenha, onVoltar }) {
+  const [nova, setNova] = useState('');
+  const [conf, setConf] = useState('');
+  const [msg, setMsg] = useState(null);
+
+  const trocar = () => {
+    if (!nova || nova.length < 4) { setMsg({ ok: false, t: 'A senha precisa ter pelo menos 4 caracteres.' }); return; }
+    if (nova !== conf) { setMsg({ ok: false, t: 'As senhas não conferem.' }); return; }
+    setSenha(nova);
+    setNova(''); setConf('');
+    setMsg({ ok: true, t: 'Senha alterada.' });
+    setTimeout(() => setMsg(null), 2500);
+  };
+
+  return (
+    <div className="alv-fade" style={{ padding: '20px', maxWidth: 600, margin: '0 auto' }}>
+      <div className="alv-row" style={{ marginBottom: 14, gap: 10 }}>
+        <button className="alv-btn alv-btn-ghost" onClick={onVoltar} style={{ padding: '6px 10px', fontSize: 13, display: 'flex', alignItems: 'center', gap: 4 }}>
+          <ArrowLeft size={14} /> Voltar
+        </button>
+      </div>
+      <h2 style={{ fontSize: 24, fontWeight: 700, margin: '0 0 18px', letterSpacing: '-.01em' }}>Ajustes</h2>
+
+      <div className="alv-card alv-shadow" style={{ padding: 20, marginBottom: 14 }}>
+        <span className="alv-label">Trocar senha</span>
+        <div style={{ marginTop: 12 }}>
+          <input className="alv-input" type="password" placeholder="Nova senha" value={nova}
+            onChange={(e) => setNova(e.target.value)} style={{ marginBottom: 10 }} />
+          <input className="alv-input" type="password" placeholder="Confirmar nova senha" value={conf}
+            onChange={(e) => setConf(e.target.value)} style={{ marginBottom: 12 }} />
+          <button className="alv-btn alv-btn-primary" onClick={trocar} style={{ padding: '9px 14px', fontSize: 13 }}>
+            Salvar
+          </button>
+          {msg && (
+            <div style={{ marginTop: 10, fontSize: 12.5, color: msg.ok ? 'var(--receita-deep)' : 'var(--divida-deep)', fontWeight: 700 }}>
+              {msg.t}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="alv-card" style={{ padding: 18, fontSize: 12.5, color: 'var(--muted)', lineHeight: 1.6 }}>
+        <b style={{ color: 'var(--ink)' }}>Sobre os dados:</b> tudo o que você lança é salvo automaticamente neste navegador.
+        Em breve, a sincronização com a planilha do Google estará disponível também aqui — assim você poderá usar no celular
+        e no notebook vendo os mesmos dados, e ter um backup automático.
+      </div>
+    </div>
+  );
+}
+
+/* =================== App =================== */
+function App() {
+  const [loaded, setLoaded] = useState(false);
+  const [logado, setLogado] = useState(false);
+  const [senha, setSenha] = useState(SENHA_INICIAL);
+  const [receitas, setReceitas] = useState([]);
+  const [despesas, setDespesas] = useState([]);
+  const [dividas, setDividas] = useState([]);
+  const [mes, setMes] = useState(MES_PADRAO);
+  const [arquivados, setArquivados] = useState([]);
+  const [tab, setTab] = useState('painel');
+  const [mostrarArq, setMostrarArq] = useState(false);
+
+  // carrega tudo + migra formato antigo de despesa
+  useEffect(() => {
+    (async () => {
+      setSenha(await storeGet('alivio_senha', SENHA_INICIAL));
+      setLogado(await storeGet('alivio_logado', false));
+      setReceitas(await storeGet('alivio_receitas', []));
+      const despRaw = await storeGet('alivio_despesas', []);
+      const despMig = despRaw.map(d => {
+        if (Array.isArray(d.parcelas)) return d;
+        // formato antigo: { mes, valor, ... } -> { parcelas: [{mes, valor}] }
+        return { ...d, parcelas: [{ mes: d.mes || MES_PADRAO, valor: +d.valor || 0 }] };
+      });
+      setDespesas(despMig);
+      setDividas(await storeGet('alivio_dividas', []));
+      setMes(await storeGet('alivio_mes', MES_PADRAO));
+      setArquivados(await storeGet('alivio_arquivados', []));
+      setLoaded(true);
+    })();
+  }, []);
+
+  // salva tudo automaticamente
+  useEffect(() => { if (loaded) storeSet('alivio_senha', senha); }, [senha, loaded]);
+  useEffect(() => { if (loaded) storeSet('alivio_logado', logado); }, [logado, loaded]);
+  useEffect(() => { if (loaded) storeSet('alivio_receitas', receitas); }, [receitas, loaded]);
+  useEffect(() => { if (loaded) storeSet('alivio_despesas', despesas); }, [despesas, loaded]);
+  useEffect(() => { if (loaded) storeSet('alivio_dividas', dividas); }, [dividas, loaded]);
+  useEffect(() => { if (loaded) storeSet('alivio_mes', mes); }, [mes, loaded]);
+  useEffect(() => { if (loaded) storeSet('alivio_arquivados', arquivados); }, [arquivados, loaded]);
+
+  if (!loaded) return <div id="carregando">Carregando o app…</div>;
+  if (!logado) return <Login senha={senha} onEntrar={() => setLogado(true)} />;
+
+  const emAjustes = tab === 'ajustes';
+
+  return (
+    <div className="alv-shell">
+      <Header mes={mes} onSair={() => setLogado(false)} onAjustes={() => setTab('ajustes')} />
+      {!emAjustes && (
+        <>
+          <AnoMesSelector mes={mes} setMes={setMes} arquivados={arquivados} mostrarArq={mostrarArq} setMostrarArq={setMostrarArq} />
+          <Tabs tab={tab} setTab={setTab} />
+        </>
+      )}
+      <main>
+        {tab === 'painel' && <Painel mes={mes} setMes={setMes} receitas={receitas} despesas={despesas} dividas={dividas} />}
+        {tab === 'receitas' && <Receitas mes={mes} receitas={receitas} setReceitas={setReceitas} />}
+        {tab === 'despesas' && <Despesas mes={mes} despesas={despesas} setDespesas={setDespesas} />}
+        {tab === 'dividas' && <Dividas dividas={dividas} setDividas={setDividas} />}
+        {tab === 'historico' && <Historico receitas={receitas} despesas={despesas} arquivados={arquivados} setArquivados={setArquivados} setMes={(m) => { setMes(m); setTab('painel'); }} />}
+        {tab === 'ajustes' && <Ajustes senha={senha} setSenha={setSenha} onVoltar={() => setTab('painel')} />}
+      </main>
+    </div>
+  );
+}
+
+createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
